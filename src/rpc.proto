@@ -850,7 +850,7 @@ message GetBlockRequest {
 }
 message BlockDetails {
     /// The hash of the block
-    string block_hash = 1 [json_name = "block_hash"]
+    string block_hash = 1 [json_name = "block_hash"];
 
     // Version of the block.  This is not the same as the protocol version.
     int32 version = 2 [json_name = "version"];
