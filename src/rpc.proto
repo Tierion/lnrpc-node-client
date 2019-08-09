@@ -852,26 +852,29 @@ message BlockDetails {
     /// The hash of the block
     string block_hash = 1 [json_name = "block_hash"];
 
+    /// The height of the block
+    uint32 block_height = 2 [json_name = "block_height"];
+
     // Version of the block.  This is not the same as the protocol version.
-    int32 version = 2 [json_name = "version"];
+    int32 version = 3 [json_name = "version"];
 
     // Hash of the previous block header in the block chain.
-    bytes prev_block = 3 [json_name = "prev_block"];
+    bytes prev_block = 4 [json_name = "prev_block"];
 
 	// Merkle tree reference to hash of all transactions for the block.
-	bytes merkle_root = 4 [json_name = "merkle_root"];
+	bytes merkle_root = 5 [json_name = "merkle_root"];
 
 	// Time the block was created.
-	uint32 timestamp = 5 [json_name = "timestamp"];
+	uint32 timestamp = 6 [json_name = "timestamp"];
 
 	// Difficulty target for the block.
-	uint32 bits = 6 [json_name = "bits"];
+	uint32 bits = 7 [json_name = "bits"];
 
 	// Nonce used to generate the block.
-	uint32 nonce = 7 [json_name = "nonce"];
+	uint32 nonce = 8 [json_name = "nonce"];
 
     /// The list of transactions relevant to the wallet.
-    repeated string transactions = 8 [json_name = "transactions"];
+    repeated string transactions = 9 [json_name = "transactions"];
 }
 
 message FeeLimit {
