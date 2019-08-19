@@ -4,6 +4,7 @@ const path = require('path');
 const rpcPath = path.join(__dirname, "rpc.proto")
 const signerPath = path.join(__dirname, "signer.proto")
 const walletPath = path.join(__dirname, "walletkit.proto")
+const invoicePath = path.join(__dirname, "invoices.proto")
 
 
 // Due to updated ECDSA generated tls.cert we need to let gprc know that
@@ -16,6 +17,7 @@ let credentials
 let lnrpc
 let signer
 let wallet
+let invoice
 
 exports.setCredentials = function (socketPath, macaroonPath, tlsCertPath) {
 	var m = fs.readFileSync(macaroonPath);
@@ -33,11 +35,13 @@ exports.setCredentials = function (socketPath, macaroonPath, tlsCertPath) {
 	const lnrpcDescriptor = grpc.load(rpcPath);
 	const signDescriptor = grpc.load(signerPath);
 	const walletDescriptor = grpc.load(walletPath);
+	const invoiceDescriptor = grpc.load(invoicePath);
 	lndHost = socketPath;
 	credentials = grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds);
 	lnrpc = lnrpcDescriptor.lnrpc;
 	signer = signDescriptor.signrpc;
 	wallet = walletDescriptor.walletrpc;
+	invoice = invoiceDescriptor.invoicesrpc;
 }
 
 exports.lightning = function (){
@@ -58,4 +62,9 @@ exports.signer = function (){
 exports.wallet = function (){
 	var walletrpc = new wallet.WalletKit(lndHost, credentials);
 	return walletrpc
+}
+
+exports.invoice = function (){
+	var invoicerpc = new invoice.Invoices(lndHost, credentials);
+	return invoicerpc
 }
