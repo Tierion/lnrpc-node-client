@@ -6,6 +6,7 @@ let client = lightning.lightning()
 let unlocker = lightning.unlocker()
 let signer = lightning.signer()
 let wallet = lightning.wallet()
+let invoice = lightning.invoice()
 
 let seed = ""
 let pass = ""
