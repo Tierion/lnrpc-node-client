@@ -48,11 +48,10 @@ exports.setCredentials = function (socketPath, macaroonPath, tlsCertPath) {
 // use setTls to initialize unauthenticated grpc connection
 exports.setTls = function (socketPath, tlsCertPath) {
 	var lndCert = fs.readFileSync(tlsCertPath);
-	var sslCreds = grpc.credentials.createSsl(lndCert);
 
 	const lnrpcDescriptor = grpc.load(rpcPath);
 	lndHost = socketPath;
-	credentials = grpc.credentials.createSsl(sslCreds);
+	credentials = grpc.credentials.createSsl(lndCert);
 	lnrpc = lnrpcDescriptor.lnrpc;
 }
 
