@@ -19,6 +19,7 @@ let signer
 let wallet
 let invoice
 
+// use setCredentials to initialize authenticated grpc connection
 exports.setCredentials = function (socketPath, macaroonPath, tlsCertPath) {
 	var m = fs.readFileSync(macaroonPath);
 	var macaroon = m.toString('hex');
@@ -42,6 +43,17 @@ exports.setCredentials = function (socketPath, macaroonPath, tlsCertPath) {
 	signer = signDescriptor.signrpc;
 	wallet = walletDescriptor.walletrpc;
 	invoice = invoiceDescriptor.invoicesrpc;
+}
+
+// use setTls to initialize unauthenticated grpc connection
+exports.setTls = function (socketPath, tlsCertPath) {
+	var lndCert = fs.readFileSync(tlsCertPath);
+	var sslCreds = grpc.credentials.createSsl(lndCert);
+
+	const lnrpcDescriptor = grpc.load(rpcPath);
+	lndHost = socketPath;
+	credentials = grpc.credentials.createSsl(sslCreds);
+	lnrpc = lnrpcDescriptor.lnrpc;
 }
 
 exports.lightning = function (){
