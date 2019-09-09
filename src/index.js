@@ -29,7 +29,7 @@ let wallet
 let invoice
 
 // Convert callbacks to async methods
-exports.promisifyGrpc = function(client) {
+exports.promisifyGrpc = client => {
   Object.keys(Object.getPrototypeOf(client)).forEach(function(functionName) {
     const originalFunction = client[functionName]
     let newFunc = async (req, mt) => {
@@ -44,7 +44,7 @@ exports.promisifyGrpc = function(client) {
 }
 
 // use setCredentials to initialize authenticated grpc connection
-exports.setCredentials = function(socketPath, macaroonPath, tlsCertPath) {
+exports.setCredentials = (socketPath, macaroonPath, tlsCertPath) => {
   var m = fs.readFileSync(macaroonPath)
   var macaroon = m.toString('hex')
 
