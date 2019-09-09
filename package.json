@@ -20,6 +20,6 @@
   "author": "jacohend",
   "license": "Apache-2.0",
   "dependencies": {
-    "grpc": "^1.22.2"
+    "grpc": "^1.23.3"
   }
 }
