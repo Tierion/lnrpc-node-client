@@ -44,6 +44,7 @@
     "prettier": "^1.17.0"
   },
   "dependencies": {
+    "@grpc/proto-loader": "^0.5.2",
     "grpc": "^1.23.3"
   }
 }

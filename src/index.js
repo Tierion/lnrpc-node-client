@@ -1,10 +1,20 @@
+const protoLoader = require('@grpc/proto-loader')
 const grpc = require('grpc')
 const fs = require('fs')
 const path = require('path')
-const rpcPath = path.join(__dirname, 'rpc.proto')
-const signerPath = path.join(__dirname, 'signer.proto')
-const walletPath = path.join(__dirname, 'walletkit.proto')
-const invoicePath = path.join(__dirname, 'invoices.proto')
+
+// load proto files
+const loadOptions = {
+  keepCase: true,
+  longs: String,
+  enums: String,
+  defaults: true,
+  oneofs: true
+}
+const rpcDefinition = protoLoader.loadSync(path.join(__dirname, 'rpc.proto'), loadOptions)
+const signerDefinition = protoLoader.loadSync(path.join(__dirname, 'signer.proto'), loadOptions)
+const walletDefinition = protoLoader.loadSync(path.join(__dirname, 'walletkit.proto'), loadOptions)
+const invoiceDefinition = protoLoader.loadSync(path.join(__dirname, 'invoices.proto'), loadOptions)
 
 // Due to updated ECDSA generated tls.cert we need to let gprc know that
 // we need to use that cipher suite otherwise there will be a handhsake
@@ -47,10 +57,10 @@ exports.setCredentials = function(socketPath, macaroonPath, tlsCertPath) {
   var lndCert = fs.readFileSync(tlsCertPath)
   var sslCreds = grpc.credentials.createSsl(lndCert)
 
-  const lnrpcDescriptor = grpc.load(rpcPath)
-  const signDescriptor = grpc.load(signerPath)
-  const walletDescriptor = grpc.load(walletPath)
-  const invoiceDescriptor = grpc.load(invoicePath)
+  const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
+  const signDescriptor = grpc.loadPackageDefinition(signerDefinition)
+  const walletDescriptor = grpc.loadPackageDefinition(walletDefinition)
+  const invoiceDescriptor = grpc.loadPackageDefinition(invoiceDefinition)
   lndHost = socketPath
   credentials = grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds)
   lnrpc = lnrpcDescriptor.lnrpc
@@ -63,7 +73,7 @@ exports.setCredentials = function(socketPath, macaroonPath, tlsCertPath) {
 exports.setTls = (socketPath, tlsCertPath) => {
   var lndCert = fs.readFileSync(tlsCertPath)
 
-  const lnrpcDescriptor = grpc.load(rpcPath)
+  const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
   lndHost = socketPath
   credentials = grpc.credentials.createSsl(lndCert)
   lnrpc = lnrpcDescriptor.lnrpc
