@@ -32,7 +32,7 @@ let invoice
 // Convert callbacks to async methods
 exports.promisifyGrpc = () => {
   console.warn(
-    '[Deprecated] Promises are supported by default as of v1.1.0. The promisifyGrpc method will be removed in a furure version.'
+    '[Deprecated] Promises are supported by default as of v1.1.0. The promisifyGrpc method will be removed in a future version.'
   )
 }
 
