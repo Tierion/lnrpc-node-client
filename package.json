@@ -7,10 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint-check": "eslint --print-config . | eslint-config-prettier-check"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/Tierion/lnrpc-node-client"
-  },
+  "repository": "https://github.com/Tierion/lnrpc-node-client.git",
   "keywords": [
     "lightning",
     "ln",
