@@ -2,6 +2,7 @@ const protoLoader = require('@grpc/proto-loader')
 const grpc = require('grpc')
 const fs = require('fs')
 const path = require('path')
+const bluebird = require('bluebird')
 
 // load proto files
 const loadOptions = {
@@ -29,18 +30,10 @@ let wallet
 let invoice
 
 // Convert callbacks to async methods
-exports.promisifyGrpc = client => {
-  Object.keys(Object.getPrototypeOf(client)).forEach(function(functionName) {
-    const originalFunction = client[functionName]
-    let newFunc = async (req, mt) => {
-      return new Promise(fill => {
-        originalFunction.bind(client)(req, mt, (err, res) => {
-          fill({ err, value: res })
-        })
-      })
-    }
-    client[functionName + 'Async'] = newFunc
-  })
+exports.promisifyGrpc = () => {
+  console.warn(
+    '[Deprecated] Promises are supported by default as of v1.1.0. The promisifyGrpc method will be removed in a furure version.'
+  )
 }
 
 // use setCredentials to initialize authenticated grpc connection
@@ -81,25 +74,25 @@ exports.setTls = (socketPath, tlsCertPath) => {
 
 exports.lightning = () => {
   var lightning = new lnrpc.Lightning(lndHost, credentials)
-  return lightning
+  return bluebird.promisifyAll(lightning)
 }
 
 exports.unlocker = () => {
   var unlocker = new lnrpc.WalletUnlocker(lndHost, credentials)
-  return unlocker
+  return bluebird.promisifyAll(unlocker)
 }
 
 exports.signer = () => {
   var signrpc = new signer.Signer(lndHost, credentials)
-  return signrpc
+  return bluebird.promisifyAll(signrpc)
 }
 
 exports.wallet = () => {
   var walletrpc = new wallet.WalletKit(lndHost, credentials)
-  return walletrpc
+  return bluebird.promisifyAll(walletrpc)
 }
 
 exports.invoice = () => {
   var invoicerpc = new invoice.Invoices(lndHost, credentials)
-  return invoicerpc
+  return bluebird.promisifyAll(invoicerpc)
 }
