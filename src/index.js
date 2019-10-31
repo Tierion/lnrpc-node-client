@@ -16,6 +16,7 @@ const rpcDefinition = protoLoader.loadSync(path.join(__dirname, 'rpc.proto'), lo
 const signerDefinition = protoLoader.loadSync(path.join(__dirname, 'signer.proto'), loadOptions)
 const walletDefinition = protoLoader.loadSync(path.join(__dirname, 'walletkit.proto'), loadOptions)
 const invoiceDefinition = protoLoader.loadSync(path.join(__dirname, 'invoices.proto'), loadOptions)
+const chainDefinition = protoLoader.loadSync(path.join(__dirname, 'chainnotifier.proto'), loadOptions)
 
 // Due to updated ECDSA generated tls.cert we need to let gprc know that
 // we need to use that cipher suite otherwise there will be a handhsake
@@ -28,6 +29,7 @@ let lnrpc
 let signer
 let wallet
 let invoice
+let chain
 
 // Convert callbacks to async methods
 exports.promisifyGrpc = () => {
@@ -54,12 +56,14 @@ exports.setCredentials = (socketPath, macaroonPath, tlsCertPath) => {
   const signDescriptor = grpc.loadPackageDefinition(signerDefinition)
   const walletDescriptor = grpc.loadPackageDefinition(walletDefinition)
   const invoiceDescriptor = grpc.loadPackageDefinition(invoiceDefinition)
+  const chainDescriptor = grpc.loadPackageDefinition(chainDefinition)
   lndHost = socketPath
   credentials = grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds)
   lnrpc = lnrpcDescriptor.lnrpc
   signer = signDescriptor.signrpc
   wallet = walletDescriptor.walletrpc
   invoice = invoiceDescriptor.invoicesrpc
+  chain = chainDescriptor.chainrpc
 }
 
 // use setTls to initialize unauthenticated grpc connection
@@ -95,4 +99,9 @@ exports.wallet = () => {
 exports.invoice = () => {
   var invoicerpc = new invoice.Invoices(lndHost, credentials)
   return bluebird.promisifyAll(invoicerpc)
+}
+
+exports.chain = () => {
+  var chainrpc = new chain.ChainNotifier(lndHost, credentials)
+  return bluebird.promisifyAll(chainrpc)
 }
