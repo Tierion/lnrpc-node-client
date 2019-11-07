@@ -1,5 +1,6 @@
 const protoLoader = require('@grpc/proto-loader')
 const grpc = require('grpc')
+const isBase64 = require('is-base64')
 const fs = require('fs')
 const path = require('path')
 const bluebird = require('bluebird')
@@ -38,18 +39,28 @@ exports.promisifyGrpc = () => {
   )
 }
 
-// use setCredentials to initialize authenticated grpc connection
-exports.setCredentials = (socketPath, macaroonPath, tlsCertPath) => {
-  var m = fs.readFileSync(macaroonPath)
-  var macaroon = m.toString('hex')
+// use setCredentials to initialize authenticated grpc connection. If both
+exports.setCredentials = (socketAddr, macaroonData, tlsCertData) => {
+  let m
+  let lndCert
+  if (isBase64(macaroonData)) {
+    m = Buffer.from(macaroon, 'base64')
+  } else {
+    m = fs.readFileSync(macaroonData)
+  }
+  if (isBase64(tlsCertData)) {
+    lndCert = Buffer.from(tlsCertData, 'base64')
+  } else {
+    lndCert = fs.readFileSync(tlsCertData)
+  }
 
+  var macaroon = m.toString('hex')
   var metadata = new grpc.Metadata()
   metadata.add('macaroon', macaroon)
   var macaroonCreds = grpc.credentials.createFromMetadataGenerator((_args, callback) => {
     callback(null, metadata)
   })
 
-  var lndCert = fs.readFileSync(tlsCertPath)
   var sslCreds = grpc.credentials.createSsl(lndCert)
 
   const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
@@ -57,7 +68,7 @@ exports.setCredentials = (socketPath, macaroonPath, tlsCertPath) => {
   const walletDescriptor = grpc.loadPackageDefinition(walletDefinition)
   const invoiceDescriptor = grpc.loadPackageDefinition(invoiceDefinition)
   const chainDescriptor = grpc.loadPackageDefinition(chainDefinition)
-  lndHost = socketPath
+  lndHost = socketAddr
   credentials = grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds)
   lnrpc = lnrpcDescriptor.lnrpc
   signer = signDescriptor.signrpc
@@ -67,11 +78,16 @@ exports.setCredentials = (socketPath, macaroonPath, tlsCertPath) => {
 }
 
 // use setTls to initialize unauthenticated grpc connection
-exports.setTls = (socketPath, tlsCertPath) => {
-  var lndCert = fs.readFileSync(tlsCertPath)
+exports.setTls = (socketAddr, tlsCertData) => {
+  let lndCert
+  if (isBase64(tlsCertData)) {
+    lndCert = Buffer.from(tlsCertData, 'base64')
+  } else {
+    lndCert = fs.readFileSync(tlsCertData)
+  }
 
   const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
-  lndHost = socketPath
+  lndHost = socketAddr
   credentials = grpc.credentials.createSsl(lndCert)
   lnrpc = lnrpcDescriptor.lnrpc
 }
