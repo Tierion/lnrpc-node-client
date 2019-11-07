@@ -40,18 +40,18 @@ exports.promisifyGrpc = () => {
 }
 
 // use setCredentials to initialize authenticated grpc connection. If both
-exports.setCredentials = (socketAddr, macaroonData, tlsCertData) => {
+exports.setCredentials = (socketAddr, macaroonValue, tlsCertValue) => {
   let m
   let lndCert
-  if (isBase64(macaroonData)) {
-    m = Buffer.from(macaroon, 'base64')
+  if (isBase64(macaroonValue)) {
+    m = Buffer.from(macaroonValue, 'base64')
   } else {
-    m = fs.readFileSync(macaroonData)
+    m = fs.readFileSync(macaroonValue)
   }
-  if (isBase64(tlsCertData)) {
-    lndCert = Buffer.from(tlsCertData, 'base64')
+  if (isBase64(tlsCertValue)) {
+    lndCert = Buffer.from(tlsCertValue, 'base64')
   } else {
-    lndCert = fs.readFileSync(tlsCertData)
+    lndCert = fs.readFileSync(tlsCertValue)
   }
 
   var macaroon = m.toString('hex')
@@ -78,12 +78,12 @@ exports.setCredentials = (socketAddr, macaroonData, tlsCertData) => {
 }
 
 // use setTls to initialize unauthenticated grpc connection
-exports.setTls = (socketAddr, tlsCertData) => {
+exports.setTls = (socketAddr, tlsCertValue) => {
   let lndCert
-  if (isBase64(tlsCertData)) {
-    lndCert = Buffer.from(tlsCertData, 'base64')
+  if (isBase64(tlsCertValue)) {
+    lndCert = Buffer.from(tlsCertValue, 'base64')
   } else {
-    lndCert = fs.readFileSync(tlsCertData)
+    lndCert = fs.readFileSync(tlsCertValue)
   }
 
   const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
