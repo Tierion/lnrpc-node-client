@@ -1,11 +1,11 @@
 {
   "name": "lnrpc-node-client",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "eslint-check": "eslint --print-config . | eslint-config-prettier-check"
+    "eslint-check": "eslint . | eslint-config-prettier-check"
   },
   "repository": "https://github.com/Tierion/lnrpc-node-client.git",
   "keywords": [
@@ -43,6 +43,7 @@
   "dependencies": {
     "@grpc/proto-loader": "^0.5.2",
     "bluebird": "^3.5.5",
-    "grpc": "^1.23.3"
+    "grpc": "^1.23.3",
+    "is-base64": "1.0.0"
   }
 }

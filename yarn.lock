@@ -1054,6 +1054,11 @@ is-arrayish@^0.2.1:
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
   integrity sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0=
 
+is-base64@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/is-base64/-/is-base64-1.0.0.tgz#0bdda1a758fcfac6d78df8bb95960512bb42db61"
+  integrity sha512-7McBWBgGDHS8OHvCnPVVxl3HdzitV6XyjM1x7vVxbzXIKJUzxphU5MDL986aZ/oKf/Q+j4Vh4m54Fjwi88n75g==
+
 is-ci@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/is-ci/-/is-ci-2.0.0.tgz#6bc6334181810e04b5c22b3d589fdca55026404c"
