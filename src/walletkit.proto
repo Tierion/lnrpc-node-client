@@ -22,13 +22,7 @@ message KeyReq {
     int32 key_family = 2;
 }
 
-message KeyForAddressRequest {
-    /** Provide a bech32 encoded in-wallet address
-    */
-    string addr_in = 1;
-}
-
-message AddrRequest{
+message AddrRequest {
     // No fields, as we always give out a p2wkh address.
 }
 message AddrResponse {
@@ -226,30 +220,32 @@ message BumpFeeRequest {
 message BumpFeeResponse {
 }
 
+message SharedKeyRequest {
+    bytes ephemeral_pubkey = 1;
+}
+
+message SharedKeyResponse {
+    bytes shared_key = 1;
+}
+
 service WalletKit {
     /**
     DeriveNextKey attempts to derive the *next* key within the key family
     (account in BIP43) specified. This method should return the next external
     child within this branch.
     */
-    rpc DeriveNextKey(KeyReq) returns (signrpc.KeyDescriptor);
+    rpc DeriveNextKey (KeyReq) returns (signrpc.KeyDescriptor);
 
     /**
     DeriveKey attempts to derive an arbitrary key specified by the passed
     KeyLocator. 
     */
-    rpc DeriveKey(signrpc.KeyLocator) returns (signrpc.KeyDescriptor);
+    rpc DeriveKey (signrpc.KeyLocator) returns (signrpc.KeyDescriptor);
 
     /**
     NextAddr returns the next unused address within the wallet.
     */
-    rpc NextAddr(AddrRequest) returns (AddrResponse);
-
-    /**
-    KeyForAddress returns a KeyDescriptor containing the pubkey
-    corresponding to a given address, assuming it is owned by the wallet.
-    */
-    rpc KeyForAddress(KeyForAddressRequest) returns (signrpc.KeyDescriptor);
+    rpc NextAddr (AddrRequest) returns (AddrResponse);
 
     /**
     PublishTransaction attempts to publish the passed transaction to the
@@ -257,21 +253,21 @@ service WalletKit {
     attempt to re-broadcast the transaction on start up, until it enters the
     chain.
     */
-    rpc PublishTransaction(Transaction) returns (PublishResponse);
+    rpc PublishTransaction (Transaction) returns (PublishResponse);
 
     /**
     SendOutputs is similar to the existing sendmany call in Bitcoind, and
     allows the caller to create a transaction that sends to several outputs at
     once. This is ideal when wanting to batch create a set of transactions.
     */
-    rpc SendOutputs(SendOutputsRequest) returns (SendOutputsResponse);
+    rpc SendOutputs (SendOutputsRequest) returns (SendOutputsResponse);
 
     /**
     EstimateFee attempts to query the internal fee estimator of the wallet to
     determine the fee (in sat/kw) to attach to a transaction in order to
     achieve the confirmation target.
     */
-    rpc EstimateFee(EstimateFeeRequest) returns (EstimateFeeResponse);
+    rpc EstimateFee (EstimateFeeRequest) returns (EstimateFeeResponse);
 
     /*
     PendingSweeps returns lists of on-chain outputs that lnd is currently
@@ -283,7 +279,7 @@ service WalletKit {
     remain supported. This is an advanced API that depends on the internals of
     the UtxoSweeper, so things may change.
     */
-    rpc PendingSweeps(PendingSweepsRequest) returns (PendingSweepsResponse);
+    rpc PendingSweeps (PendingSweepsRequest) returns (PendingSweepsResponse);
 
     /*
     BumpFee bumps the fee of an arbitrary input within a transaction. This RPC
@@ -312,5 +308,7 @@ service WalletKit {
     fee preference being provided. For now, the responsibility of ensuring that
     the new fee preference is sufficient is delegated to the user.
     */
-    rpc BumpFee(BumpFeeRequest) returns (BumpFeeResponse);
+    rpc BumpFee (BumpFeeRequest) returns (BumpFeeResponse);
+
+    rpc DeriveSharedKey (SharedKeyRequest) returns (SharedKeyResponse);
 }
