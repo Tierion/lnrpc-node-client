@@ -48,10 +48,16 @@ exports.setCredentials = (socketAddr, macaroonValue, tlsCertValue) => {
   } else {
     m = fs.readFileSync(macaroonValue)
   }
-  if (isBase64(tlsCertValue)) {
+  let sslCreds
+  if (!tlsCertValue && socketAddr.includes(':443')) sslCreds = grpc.credentials.createSsl()
+  else if (!tlsCertValue)
+    throw new Error('Missing tls certificate only supported if connecting to socket over port 443')
+  else if (isBase64(tlsCertValue)) {
     lndCert = Buffer.from(tlsCertValue, 'base64')
+    sslCreds = grpc.credentials.createSsl(lndCert)
   } else {
     lndCert = fs.readFileSync(tlsCertValue)
+    sslCreds = grpc.credentials.createSsl(lndCert)
   }
 
   var macaroon = m.toString('hex')
@@ -60,8 +66,6 @@ exports.setCredentials = (socketAddr, macaroonValue, tlsCertValue) => {
   var macaroonCreds = grpc.credentials.createFromMetadataGenerator((_args, callback) => {
     callback(null, metadata)
   })
-
-  var sslCreds = grpc.credentials.createSsl(lndCert)
 
   const lnrpcDescriptor = grpc.loadPackageDefinition(rpcDefinition)
   const signDescriptor = grpc.loadPackageDefinition(signerDefinition)
